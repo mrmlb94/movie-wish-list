@@ -1,308 +1,240 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
+	
+	
+	
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.5</version>
-		<relativePath/>
+		<version>3.5.6</version>
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+	
+	
+	
 	<groupId>com.example</groupId>
-	<artifactId>movie-wish-list</artifactId>
+	<artifactId>film-wish-list</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>movie-wish-list</name>
-	<description>Movie wish list project for Spring Boot</description>
-
+	<description>movie wish list project for Spring Boot</description>
+	<url/>
+	
+	<licenses>
+	<license/>
+	</licenses>
+	
+	
+	<developers>
+		<developer/>
+	</developers>
+	
+	
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	
+	
 	<properties>
+  <configuration-dockerComposeFile>${project.basedir}/docker-compose.yml</configuration-dockerComposeFile>
 		<java.version>17</java.version>
-
-		<!-- Test configuration -->
-		<skip.unit-tests>false</skip.unit-tests>
-		<skip.integration-tests>false</skip.integration-tests>
-
-		<!-- Environment URLs -->
-		<e2e.health.url>http://localhost:8080/actuator/health</e2e.health.url>
-		<it.mongo.uri>mongodb://localhost:27018/movies_it</it.mongo.uri>
-		<e2e.mongo.uri>mongodb://localhost:27018/movies_e2e</e2e.mongo.uri>
-		<server.port>8080</server.port>
-
-		<!-- Plugin versions (only for plugins not managed by Spring Boot) -->
-		<exec-maven-plugin.version>3.5.1</exec-maven-plugin.version>
-		<webdrivermanager.version>6.2.0</webdrivermanager.version>
 	</properties>
+	
+	<dependencyManagement>
+			<dependencies>
 
-	<dependencies>
-		<!-- Spring Boot Starters -->
+	
+			<!-- webdrivermanager auto-resolves Chrome/Firefox/Edge driver versions. -->
+		<dependency>
+		    <groupId>org.seleniumhq.selenium</groupId>
+		    <artifactId>selenium-java</artifactId>
+		    <version>4.24.0</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-api</artifactId>
+		    <version>2.23.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>2.23.1</version>
+		</dependency>
+
+			</dependencies>
+
+</dependencyManagement>
+
+	
+		<dependencies>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web-services</artifactId>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-test</artifactId>
+		    <scope>test</scope>
+		</dependency>
 
-		<!-- Runtime Dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-
-
-		<!-- Test Dependencies -->
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-testcontainers</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- TestContainers -->
+		
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>mongodb</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- REST Testing -->
+				
 		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>rest-assured</artifactId>
-			<scope>test</scope>
+		    <groupId>io.github.bonigarcia</groupId>
+		    <artifactId>webdrivermanager</artifactId>
+		    <version>5.9.2</version>
+		    <scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>json-path</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>xml-path</artifactId>
-			<scope>test</scope>
-		</dependency>
+		 
+		 
+<dependency>
+		  <groupId>junit</groupId>
+		  <artifactId>junit</artifactId>
+		  <scope>test</scope>
+</dependency>
+		
+		
+		
+		
+		  <dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-java</artifactId>
+    <scope>test</scope>
+  </dependency>
 
-		<!-- Selenium Testing -->
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.github.bonigarcia</groupId>
-			<artifactId>webdrivermanager</artifactId>
-			<version>${webdrivermanager.version}</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+</dependencies>
 
-	<build>
-		<plugins>
-			<!-- Spring Boot Plugin -->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
 
-			<!-- Docker Compose Integration -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>${exec-maven-plugin.version}</version>
-				<executions>
-					<!-- Compose UP -->
-					<execution>
-						<id>compose-up</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>docker</executable>
-							<arguments>
-								<argument>compose</argument>
-								<argument>-f</argument>
-								<argument>${project.basedir}/docker-compose.yml</argument>
-								<argument>up</argument>
-								<argument>-d</argument>
-								<argument>--wait</argument>
-							</arguments>
-						</configuration>
-					</execution>
 
-					<!-- Health Check with timeout -->
-					<execution>
-						<id>wait-backend-health</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>bash</executable>
-							<arguments>
-								<argument>-c</argument>
-								<argument>
-									for i in {1..60}; do
-									if curl -f ${e2e.health.url} | grep -q '"status":"UP"'; then
-									echo "Backend is healthy"; exit 0;
-									fi;
-									echo "Waiting for backend... ($i/60)"; sleep 2;
-									done;
-									echo "Backend health check failed"; exit 1;
-								</argument>
-							</arguments>
-						</configuration>
-					</execution>
 
-					<!-- Compose DOWN -->
-					<execution>
-						<id>compose-down</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>docker</executable>
-							<arguments>
-								<argument>compose</argument>
-								<argument>-f</argument>
-								<argument>${project.basedir}/docker-compose.yml</argument>
-								<argument>down</argument>
-								<argument>-v</argument>
-								<argument>--remove-orphans</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 
-			<!-- Unit Tests -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skipTests>${skip.unit-tests}</skipTests>
-					<includes>
-						<include>**/*Test.java</include>
-						<include>**/*Tests.java</include>
-					</includes>
-					<excludes>
-						<exclude>**/*IT.java</exclude>
-						<exclude>**/*ITCase.java</exclude>
-						<exclude>**/*E2E.java</exclude>
-						<exclude>**/*E2ETest.java</exclude>
-					</excludes>
-					<systemPropertyVariables>
-						<spring.profiles.active>test</spring.profiles.active>
-						<java.awt.headless>true</java.awt.headless>
-					</systemPropertyVariables>
-				</configuration>
-			</plugin>
+<build>
+    <plugins>
+        <!-- Surefire: runs unit tests -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <configuration>
+        <includes>
+            <include>**/*Test.java</include>
+        </includes>
+    </configuration>
+</plugin>
 
-			<!-- Integration & E2E Tests -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<executions>
-					<!-- Integration Tests -->
-					<execution>
-						<id>integration-tests</id>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skip.integration-tests}</skipTests>
-							<includes>
-								<include>**/*IT.java</include>
-								<include>**/*ITCase.java</include>
-							</includes>
-							<systemPropertyVariables>
-								<spring.data.mongodb.uri>${it.mongo.uri}</spring.data.mongodb.uri>
-								<java.awt.headless>true</java.awt.headless>
-							</systemPropertyVariables>
-						</configuration>
-					</execution>
 
-					<!-- E2E Tests -->
-					<execution>
-						<id>e2e-tests</id>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skip.integration-tests}</skipTests>
-							<includes>
-								<include>**/*E2E.java</include>
-								<include>**/*E2ETest.java</include>
-							</includes>
-							<systemPropertyVariables>
-								<baseUrl>http://localhost:${server.port}</baseUrl>
-								<server.port>${server.port}</server.port>
-								<spring.data.mongodb.uri>${e2e.mongo.uri}</spring.data.mongodb.uri>
-								<java.awt.headless>true</java.awt.headless>
-							</systemPropertyVariables>
-						</configuration>
-					</execution>
 
-					<!-- Verify Results -->
-					<execution>
-						<id>verify</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    <!-- Start/stop Docker Compose for integration/E2E tests -->
+    <plugin>
+      <groupId>com.dkanejs.maven.plugins</groupId>
+      <artifactId>docker-compose-maven-plugin</artifactId>
+      <version>4.0.0</version>
+      <executions>
+        <!-- Start services before integration-test phase -->
+        <execution>
+          <id>docker-compose-up</id>
+          <phase>pre-integration-test</phase>
+          <goals>
+            <goal>up</goal>
+          </goals>
+        </execution>
+        <!-- Stop services after verify phase -->
+        <execution>
+          <id>docker-compose-down</id>
+          <phase>post-integration-test</phase>
+          <goals>
+            <goal>down</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+    <composeFile>${project.basedir}/docker-compose.yml</composeFile>
+        <detachedMode>true</detachedMode>
+        <build>true</build>
+      </configuration>
+    </plugin>
 
-	<profiles>
-		<!-- CI Profile for faster builds -->
-		<profile>
-			<id>ci</id>
-			<properties>
-				<skip.integration-tests>true</skip.integration-tests>
-			</properties>
-		</profile>
 
-		<!-- Quick Profile - only unit tests -->
-		<profile>
-			<id>quick</id>
-			<properties>
-				<skip.integration-tests>true</skip.integration-tests>
-			</properties>
-		</profile>
-	</profiles>
+
+    <!-- Failsafe for IT/E2E tests -->
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-failsafe-plugin</artifactId>
+  <executions>
+    <execution>
+      <goals>
+        <goal>integration-test</goal>
+        <goal>verify</goal>
+      </goals>
+    </execution>
+  </executions>
+  <configuration>
+    <includes>
+      <include>**/*IT.java</include>
+      <include>**/*E2ETest.java</include>
+    </includes>
+    <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
+  </configuration>
+</plugin>
+    
+    
+    
+    </plugins>
+</build>
 </project>
