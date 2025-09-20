@@ -1,16 +1,11 @@
 package com.example.moviewishlist.unit;
 
 import com.example.moviewishlist.controller.WishlistRestController;
-import com.example.moviewishlist.controller.WishlistRestController;
 import com.example.moviewishlist.model.Model;
-import com.example.moviewishlist.*;
 import com.example.moviewishlist.service.MovieService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
