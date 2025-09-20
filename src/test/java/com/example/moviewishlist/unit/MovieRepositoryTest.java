@@ -23,7 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataMongoTest
 class MovieRepositoryTest {
 
-    @Container
+    @SuppressWarnings("resource")
+	@Container
     static MongoDBContainer mongoContainer = new MongoDBContainer(DockerImageName.parse("mongo:7.0"))
             .withReuse(true);
 
