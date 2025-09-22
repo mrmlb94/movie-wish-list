@@ -71,6 +71,12 @@
 		    <artifactId>log4j-core</artifactId>
 		    <version>2.23.1</version>
 		</dependency>
+				<!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+				<dependency>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.12</version>
+				</dependency>
 
 			</dependencies>
 
@@ -167,10 +173,10 @@
 
 
 <!--			<argLine>@{argLine}																							-->
-			<argLine>
-				-javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/1.17.7/byte-buddy-agent-1.17.7.jar
-				-XX:+EnableDynamicAgentLoading
-			</argLine>
+<!--			<argLine>-->
+<!--				-javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/1.17.7/byte-buddy-agent-1.17.7.jar-->
+<!--				-XX:+EnableDynamicAgentLoading-->
+<!--			</argLine>-->
 <!--			</argLine>																									-->
 
 
@@ -246,7 +252,64 @@
 		</plugin>
 
 <!-- PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT  -->
-    <!-- Start/stop Docker Compose for integration/E2E tests -->
+
+
+
+
+
+
+<!-- Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov. -->
+		<plugin>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.13</version>
+
+			<configuration>
+			</configuration>
+			<executions>
+				<execution>
+					<id>prepare-agent</id>
+					<goals>
+						<goal>prepare-agent</goal>
+					</goals>
+				</execution>
+				<execution>
+					<id>report</id>
+					<phase>test</phase>
+					<goals>
+						<goal>report</goal>
+					</goals>
+
+					<configuration>
+						<excludes>
+							<exclude>com/example/movie/wish/list/MovieWishListApplication*</exclude>
+							<exclude>com/example/movie/wish/list/model/Wishlist*</exclude>
+						</excludes>
+					</configuration>
+
+				</execution>
+			</executions>
+		</plugin>
+
+<!-- Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov. -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<!-- Start/stop Docker Compose for integration/E2E tests -->
     <plugin>
       <groupId>com.dkanejs.maven.plugins</groupId>
       <artifactId>docker-compose-maven-plugin</artifactId>
