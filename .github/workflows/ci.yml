@@ -12,18 +12,21 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Set up Maven
         uses: s4u/setup-maven-action@v1.18.0
 
-      - name: Build and Run Tests with Docker Compose
+      - name: Start Docker Compose
+        run: docker-compose up -d
+
+      - name: Build and Run Tests
         run: mvn clean verify
 
       - name: Run JaCoCo Coverage Report
@@ -43,3 +46,7 @@ jobs:
         with:
           name: pit-report
           path: target/pit-reports/
+
+      - name: Stop Docker Compose
+        if: always()   # ensures cleanup even if previous steps fail
+        run: docker-compose down
