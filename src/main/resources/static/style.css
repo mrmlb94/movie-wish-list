@@ -1,16 +1,16 @@
 * { box-sizing: border-box; }
 body {
-    margin: 0; font-family: IRANSans, Vazirmatn, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f5f7fb; color: #222;
+  margin: 0; font-family: IRANSans, Vazirmatn, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f5f7fb; color: #222;
 }
 .container { max-width: 900px; margin: 40px auto; padding: 0 16px; }
 .card {
-    background: #fff; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    padding: 20px 24px; margin-bottom: 24px; border: 1px solid #eef0f5;
+  background: #fff; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  padding: 20px 24px; margin-bottom: 24px; border: 1px solid #eef0f5;
 }
 .card h1, .card h2 { margin: 0 0 16px; }
 .row { margin-bottom: 12px; }
 input[type="text"], textarea {
-    width: 100%; padding: 10px 12px; border: 1px solid #d8deea; border-radius: 10px; outline: none; background: #fbfcff;
+  width: 100%; padding: 10px 12px; border: 1px solid #d8deea; border-radius: 10px; outline: none; background: #fbfcff;
 }
 textarea { min-height: 80px; resize: vertical; }
 .actions { display: flex; gap: 8px; }
