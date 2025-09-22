@@ -48,5 +48,5 @@ jobs:
           path: target/pit-reports/
 
       - name: Stop Docker Compose
-        if: always()   # ensures cleanup even if previous steps fail
+        if: always()
         run: docker-compose down
