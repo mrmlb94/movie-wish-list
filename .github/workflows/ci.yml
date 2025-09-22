@@ -11,46 +11,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # Step 3: Verify Java version
       - name: Verify Java Version
         run: java -version
 
-      # Step 4: Set up Maven
       - name: Set up Maven
         uses: s4u/setup-maven-action@v1.18.0
 
-      # Step 5: Build the app with Maven
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # Step 6: Run Unit Tests
       - name: Run Tests
         run: mvn test
 
-      # Step 7: Install Docker Compose
       - name: Install Docker Compose
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
 
-      # Step 8: Start Docker Compose
       - name: Start Docker Compose
         run: docker-compose up -d
         env:
           SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/moviesCollection
 
-      # Step 9: Wait for MongoDB to be healthy
       - name: Wait for MongoDB
         run: |
           until docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps -q mongodb) | grep -q '"healthy"'; do
@@ -58,19 +49,16 @@ jobs:
             sleep 5
           done
 
-      # Step 10: Run Integration Tests
       - name: Run Integration Tests
         run: |
           curl --fail http://localhost:8080 || exit 1
 
-      # Step 11: Stop and Remove Docker Compose Services
       - name: Stop Docker Compose
         if: always()
         run: docker-compose down
 
-      # Step 12: Lint Dockerfile and Compose File
       - name: Lint Dockerfile
-        uses: hadolint/hadolint-action@v2
+        uses: hadolint/hadolint-action@v1
         with:
           dockerfile: Dockerfile
 
