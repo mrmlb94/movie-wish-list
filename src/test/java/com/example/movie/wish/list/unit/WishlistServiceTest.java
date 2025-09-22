@@ -6,6 +6,7 @@ import com.example.movie.wish.list.service.WishlistService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -36,8 +37,49 @@ class WishlistServiceTest {
 
         Wishlist saved = service.addMovie(movie);
 
-        assertThat(saved).isEqualTo(movie);
+        // Stronger assertion - same instance (kills mutants returning a new instance or null)
+        assertThat(saved).isSameAs(movie);
         verify(repository, times(1)).save(movie);
+        verifyNoMoreInteractions(repository);
+    }
+
+    // ✅ Update (kills VOID_METHOD_CALLS on setTitle/setDescription/setTags/setDone)
+    @Test
+    void testUpdateMovie() {
+        // Given: existing entity in repo
+        Wishlist existing = new Wishlist("Inception", "Sci-Fi");
+        existing.setTags(List.of("classic"));
+        existing.setDone(false);
+
+        when(repository.findById("1")).thenReturn(Optional.of(existing));
+        when(repository.save(any(Wishlist.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // When: updating multiple fields, incl. tags + done + description
+        Wishlist updatedMovie = new Wishlist("Inception Reloaded", "Neo Sci-Fi"); // CHANGED
+        updatedMovie.setTags(Arrays.asList("sci-fi", "thriller"));
+        updatedMovie.setDone(true);
+
+        Wishlist result = service.updateMovie("1", updatedMovie);
+
+        // Then: capture what was actually persisted
+        ArgumentCaptor<Wishlist> captor = ArgumentCaptor.forClass(Wishlist.class);
+        verify(repository).save(captor.capture());
+        Wishlist saved = captor.getValue();
+
+        // These assertions will fail if any setter call is removed by a mutant
+        assertThat(saved.getTitle()).isEqualTo("Inception Reloaded");
+        assertThat(saved.getDescription()).isEqualTo("Neo Sci-Fi"); // CHANGED
+        assertThat(saved.getTags()).containsExactly("sci-fi", "thriller");
+        assertThat(saved.isDone()).isTrue();
+
+        // Also assert the service's return mirrors the saved entity
+        assertThat(result.getTitle()).isEqualTo("Inception Reloaded");
+        assertThat(result.getDescription()).isEqualTo("Neo Sci-Fi"); // CHANGED
+        assertThat(result.getTags()).containsExactly("sci-fi", "thriller");
+        assertThat(result.isDone()).isTrue();
+
+        verify(repository, times(1)).findById("1");
+        verifyNoMoreInteractions(repository);
     }
 
     // ✅ Read - Get All
@@ -52,6 +94,7 @@ class WishlistServiceTest {
         assertThat(movies).hasSize(2);
         assertThat(movies).containsExactly(movie1, movie2);
         verify(repository, times(1)).findAll();
+        verifyNoMoreInteractions(repository);
     }
 
     // ✅ Read - Get by ID
@@ -65,6 +108,7 @@ class WishlistServiceTest {
         assertThat(found).isPresent();
         assertThat(found.get()).isEqualTo(movie);
         verify(repository, times(1)).findById("1");
+        verifyNoMoreInteractions(repository);
     }
 
     // ✅ Read - Get by ID not found
@@ -76,21 +120,7 @@ class WishlistServiceTest {
 
         assertThat(found).isEmpty();
         verify(repository, times(1)).findById("99");
-    }
-
-    // ✅ Update
-    @Test
-    void testUpdateMovie() {
-        Wishlist existing = new Wishlist("Inception", "Sci-Fi");
-        when(repository.findById("1")).thenReturn(Optional.of(existing));
-        when(repository.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Wishlist updatedMovie = new Wishlist("Inception Reloaded", "Sci-Fi");
-        Wishlist result = service.updateMovie("1", updatedMovie);
-
-        assertThat(result.getTitle()).isEqualTo("Inception Reloaded");
-        verify(repository, times(1)).findById("1");
-        verify(repository, times(1)).save(existing);
+        verifyNoMoreInteractions(repository);
     }
 
     // ✅ Update - Not Found
@@ -105,6 +135,7 @@ class WishlistServiceTest {
 
         verify(repository, times(1)).findById("99");
         verify(repository, never()).save(any());
+        verifyNoMoreInteractions(repository);
     }
 
     // ✅ Delete
@@ -115,5 +146,6 @@ class WishlistServiceTest {
         service.deleteMovie("1");
 
         verify(repository, times(1)).deleteById("1");
+        verifyNoMoreInteractions(repository);
     }
 }

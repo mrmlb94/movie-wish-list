@@ -72,21 +72,29 @@ class WishlistRestControllerTest {
         verify(service, times(1)).getMovieById("99");
     }
 
+
     @Test
     void testUpdateMovie() {
-        Wishlist updated = new Wishlist("Inception Reloaded", "Sci-Fi");
+        Wishlist updated = new Wishlist("Inception Reloaded", "Mind-bender"); // different desc
         when(service.updateMovie("1", updated)).thenReturn(updated);
 
         Wishlist result = controller.updateMovie("1", updated);
+
         assertEquals("Inception Reloaded", result.getTitle());
+        assertEquals("Mind-bender", result.getDescription()); // assert both
         verify(service, times(1)).updateMovie("1", updated);
+        verifyNoMoreInteractions(service); // ensures no hidden calls survive
     }
+
 
     @Test
     void testDeleteMovie() {
         doNothing().when(service).deleteMovie("1");
 
         assertDoesNotThrow(() -> controller.deleteMovie("1"));
+
         verify(service, times(1)).deleteMovie("1");
+        verifyNoMoreInteractions(service);
     }
+
 }
