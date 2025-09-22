@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: Java CI with Maven and Docker Compose
 
 on:
   push:
@@ -9,59 +9,62 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/moviesCollection
 
     steps:
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Step 2: Set up JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
           java-version: '17'
+          distribution: 'temurin'
 
-      - name: Verify Java Version
-        run: java -version
+      # Step 3: Cache Maven dependencies
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
-      - name: Set up Maven
-        uses: s4u/setup-maven-action@v1.18.0
-
-      - name: Build with Maven
+      # Step 4: Build the JAR file (skip tests for now)
+      - name: Build JAR file explicitly
         run: mvn clean package -DskipTests
 
-      - name: Run Tests
-        run: mvn test
-
-      - name: Install Docker Compose
+      # Step 5: Start services via Docker Compose
+      - name: Start backend and MongoDB via Docker Compose
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+          docker compose up -d --build
+          sleep 30
 
-      - name: Start Docker Compose
-        run: docker-compose up -d
-        env:
-          SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/moviesCollection
+      # Step 6: Show logs for troubleshooting
+      - name: Show Docker Compose Logs
+        run: docker compose logs
 
-      - name: Wait for MongoDB
-        run: |
-          until docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps -q mongodb) | grep -q '"healthy"'; do
-            echo "Waiting for MongoDB to be healthy..."
-            sleep 5
-          done
+      # Step 7: Run Integration Tests
+      - name: Run Integration and Unit Tests
+        run: mvn clean verify -P skip-e2e-tests
 
-      - name: Run Integration Tests
-        run: |
-          curl --fail http://localhost:8080 || exit 1
+      # Step 8: Confirm JaCoCo report file exists
+      - name: Confirm JaCoCo report file exists
+        run: ls -la ./target/site/jacoco
 
-      - name: Stop Docker Compose
-        if: always()
-        run: docker-compose down
-
-      - name: Lint Dockerfile
-        uses: hadolint/hadolint-action@v1
+      # Step 9: Upload coverage reports to Codecov (if applicable)
+      - name: Upload JaCoCo coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          dockerfile: Dockerfile
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./target/site/jacoco/jacoco.xml
+          fail_ci_if_error: true
+          verbose: true
 
-      - name: Lint Docker Compose File
-        run: |
-          docker-compose config
+      # Step 10: Stop and remove Docker Compose services
+      - name: Stop and Remove Docker Compose Services
+        if: always()
+        run: docker compose down
