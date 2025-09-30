@@ -164,7 +164,32 @@
 
 <build>
     <plugins>
-	        <!-- Surefire: runs unit tests -->
+
+
+
+		<plugin>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-maven-plugin</artifactId>
+			<version>3.5.6</version>
+			<executions>
+				<execution>
+					<goals>
+						<goal>repackage</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+
+
+
+
+
+
+
+
+
+
+		<!-- Surefire: runs unit tests -->
 	<plugin>
 	    <groupId>org.apache.maven.plugins</groupId>
 	    <artifactId>maven-surefire-plugin</artifactId>
@@ -254,10 +279,6 @@
 <!-- PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT PIT  -->
 
 
-
-
-
-
 <!-- Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov. -->
 		<plugin>
 			<groupId>org.jacoco</groupId>
@@ -292,21 +313,6 @@
 		</plugin>
 
 <!-- Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov.  Code Cov. -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 		<!-- Start/stop Docker Compose for integration/E2E tests -->
