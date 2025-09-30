@@ -1,13 +1,4 @@
 # Movie Wish List
-
-[![CI Pipeline - Build, Test & Deploy](https://github.com/mrmlb94/movie-wish-list/actions/workflows/ci.yml/badge.svg)](https://github.com/mrmlb94/movie-wish-list/actions/workflows/ci.yml)
-
-[![Coverage Status](https://coveralls.io/repos/github/mrmlb94/movie-wish-list/badge.svg?branch=master)](https://coveralls.io/github/mrmlb94/movie-wish-list?branch=master)
-
-[![codecov](https://codecov.io/gh/mrmlb94/movie-wish-list/branch/master/graph/badge.svg)](https://codecov.io/gh/mrmlb94/movie-wish-list)
-
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/567792b35cd74006930b1c59926b881f)](https://app.codacy.com/gh/mrmlb94/movie-wish-list/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_movie-wish-list&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mrmlb94_movie-wish-list)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_movie-wish-list&metric=bugs)](https://sonarcloud.io/summary/new_code?id=mrmlb94_movie-wish-list)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_movie-wish-list&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=mrmlb94_movie-wish-list)
@@ -28,20 +19,6 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
 
 A production-grade web application for managing your movie wish list with military-grade testing and quality assurance.
-
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Architecture](#architecture)
-- [Getting Started](#getting-started)
-- [Testing Strategy](#testing-strategy)
-- [CI/CD Pipeline](#cicd-pipeline)
-- [Code Quality](#code-quality)
-- [API Documentation](#api-documentation)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## 🎯 Overview
 
@@ -240,13 +217,13 @@ Our GitHub Actions pipeline ensures code quality on every commit:
 
 ### Quality Metrics
 
-| Metric | Threshold | Tool |
-|--------|-----------|------|
-| Code Coverage | 100% | JaCoCo |
-| Mutation Coverage | 100% | PIT |
-| Build Success | Required | Maven |
-| Integration Tests | All Pass | Failsafe |
-| E2E Tests | All Pass | Selenium |
+| Metric            | Threshold | Tool     |
+|-------------------|-----------|----------|
+| Code Coverage     | 100%      | JaCoCo   |
+| Mutation Coverage | 100%      | PIT      |
+| Build Success     | Required  | Maven    |
+| Integration Tests | All Pass  | Failsafe |
+| E2E Tests         | All Pass  | Selenium |
 
 ### Quality Gates
 
