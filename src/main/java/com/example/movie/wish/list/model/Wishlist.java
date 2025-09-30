@@ -17,7 +17,6 @@ public class Wishlist {
 
     public Wishlist() {
         this.tags = new ArrayList<>();
-        // done defaults to false automatically, no need to assign
     }
 
     public Wishlist(String title) {
@@ -35,7 +34,7 @@ public class Wishlist {
         this.title = title;
         this.description = description;
         this.tags = tags != null ? tags : new ArrayList<>();
-        this.done = done; // leave as is; only literal 'false' removed from outside calls
+        this.done = done;
     }
 
     // Getters and Setters
@@ -80,6 +79,8 @@ public class Wishlist {
     }
 
     public void setDone(Boolean done) {
-        this.done = done != null ? done : false;
+        if (done != null) {
+            this.done = done;
+        }
     }
 }
