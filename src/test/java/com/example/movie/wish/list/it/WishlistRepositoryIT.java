@@ -33,7 +33,7 @@ class WishlistRepositoryIT {
         List<Wishlist> allMovies = repository.findAll();
 
         assertThat(allMovies).isNotEmpty();
-        assertThat(allMovies.get(0).getTitle()).isEqualTo("Tenet");
+        assertThat(allMovies.getFirst().getTitle()).isEqualTo("Tenet");
     }
 }
 //This test will:

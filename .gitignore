@@ -1,7 +1,9 @@
 # === Large Binary Files ===
 google-chrome-stable_current_amd64.deb
 chromedriver-linux64/
-*DS_Store
+*DS_Store*
+*HELP.*
+*.iml
 # === Build and Generated Files ===
 target/
 build/
@@ -17,7 +19,6 @@ target/HELP.md
 ## IntelliJ IDEA
 .idea/
 *.iws
-*.iml
 *.ipr
 
 ## Eclipse / STS (Spring Tool Suite)
