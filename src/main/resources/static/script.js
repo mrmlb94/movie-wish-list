@@ -1,11 +1,12 @@
 const BASE_URL = "http://localhost:8080/api";
 
-const listEl = document.getElementById('Movie-list'); // مطابق HTML
+const listEl = document.getElementById('Movie-list');
 const formEl = document.getElementById('Movie-form');
 const refreshBtn = document.getElementById('refresh');
 
 let movies = [];
 
+// Helper: parse tags string into array
 function parseTags(input) {
   return input
       .split(',')
@@ -13,29 +14,36 @@ function parseTags(input) {
       .filter(Boolean);
 }
 
-async function fetchMovies() {
-  try {
-    const res = await fetch(`${BASE_URL}/wishlist`);
-    movies = await res.json();
-    renderMovies();
-  } catch (e) {
-    console.error('Error loading movies', e);
-    alert('Error fetching task list. Make sure the backend is running.');
-  }
+// Helper: fetch JSON from a URL
+async function fetchJson(url, options) {
+  const res = await fetch(url, options);
+  if (!res.ok) throw new Error(res.statusText || 'Request failed');
+  if (res.status === 204) return null; // No content
+  return await res.json();
 }
 
+// Helper: update movie array and re-render
+function updateMovieList(updatedMovie) {
+  movies = movies.map(x => x.id === updatedMovie.id ? updatedMovie : x);
+  renderMovies();
+}
+
+// Helper: render all movies
 function renderMovies() {
   listEl.innerHTML = '';
-  movies.forEach(t => {
+
+  for (const t of movies) {
     const li = document.createElement('li');
     li.className = 'movie-item' + (t.done ? ' done' : '');
 
+    // Checkbox
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.className = 'checkbox';
     checkbox.checked = !!t.done;
     checkbox.addEventListener('change', () => toggleDone(t));
 
+    // Content
     const content = document.createElement('div');
     const title = document.createElement('div');
     title.className = 'movie-title';
@@ -47,17 +55,18 @@ function renderMovies() {
 
     const tagsWrap = document.createElement('div');
     tagsWrap.className = 'tags';
-    (t.tags || []).forEach(tag => {
+    for (const tag of t.tags || []) {
       const chip = document.createElement('span');
       chip.className = 'tag';
       chip.textContent = tag;
       tagsWrap.appendChild(chip);
-    });
+    }
 
     content.appendChild(title);
     content.appendChild(desc);
     content.appendChild(tagsWrap);
 
+    // Actions
     const actions = document.createElement('div');
     actions.className = 'item-actions';
 
@@ -77,24 +86,36 @@ function renderMovies() {
     li.appendChild(checkbox);
     li.appendChild(content);
     li.appendChild(actions);
+
     listEl.appendChild(li);
-  });
+  }
 }
 
+// Fetch all movies
+async function fetchMovies() {
+  try {
+    movies = await fetchJson(`${BASE_URL}/wishlist`);
+    renderMovies();
+  } catch (e) {
+    console.error('Error loading movies', e);
+    alert('Error fetching task list. Make sure the backend is running.');
+  }
+}
+
+// Add new movie
 async function addMovie(e) {
   e.preventDefault();
   const title = document.getElementById('title').value.trim();
   const description = document.getElementById('description').value.trim();
   const tags = parseTags(document.getElementById('tags').value);
   if (!title) { alert('Title is required'); return; }
+
   try {
-    const res = await fetch(`${BASE_URL}/wishlist`, {
+    const created = await fetchJson(`${BASE_URL}/wishlist`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, description, tags, done: false })
     });
-    if (!res.ok) throw new Error('Create failed');
-    const created = await res.json();
     movies.unshift(created);
     renderMovies();
     formEl.reset();
@@ -104,6 +125,7 @@ async function addMovie(e) {
   }
 }
 
+// Edit movie
 async function editMovie(t) {
   const newTitle = prompt('Title:', t.title || '');
   if (newTitle === null) return;
@@ -114,43 +136,38 @@ async function editMovie(t) {
   const newTags = parseTags(newTagsStr);
 
   try {
-    const res = await fetch(`${BASE_URL}/wishlist/${t.id}`, {
+    const updated = await fetchJson(`${BASE_URL}/wishlist/${t.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title: newTitle, description: newDesc, tags: newTags, done: t.done })
     });
-    if (!res.ok) throw new Error('Update failed');
-    const updated = await res.json();
-    movies = movies.map(x => x.id === t.id ? updated : x);
-    renderMovies();
+    updateMovieList(updated);
   } catch (e) {
     console.error(e);
     alert('Failed to update item');
   }
 }
 
+// Toggle done status
 async function toggleDone(t) {
   try {
-    const res = await fetch(`${BASE_URL}/wishlist/${t.id}`, {
+    const updated = await fetchJson(`${BASE_URL}/wishlist/${t.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title: t.title, description: t.description, tags: t.tags || [], done: !t.done })
     });
-    if (!res.ok) throw new Error('Toggle failed');
-    const updated = await res.json();
-    movies = movies.map(x => x.id === t.id ? updated : x);
-    renderMovies();
+    updateMovieList(updated);
   } catch (e) {
     console.error(e);
     alert('Error changing status');
   }
 }
 
+// Delete movie
 async function deleteMovie(id) {
   if (!confirm('Delete this item?')) return;
   try {
-    const res = await fetch(`${BASE_URL}/wishlist/${id}`, { method: 'DELETE' });
-    if (res.status !== 204) throw new Error('Delete failed');
+    await fetchJson(`${BASE_URL}/wishlist/${id}`, { method: 'DELETE' });
     movies = movies.filter(t => t.id !== id);
     renderMovies();
   } catch (e) {
@@ -159,7 +176,10 @@ async function deleteMovie(id) {
   }
 }
 
+// Event listeners
 formEl.addEventListener('submit', addMovie);
 refreshBtn.addEventListener('click', fetchMovies);
 
-fetchMovies();
+
+// Initial load (top-level await)
+await fetchMovies();

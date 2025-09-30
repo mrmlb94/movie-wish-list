@@ -4,22 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Movie Wish List</title>
-  <link rel="stylesheet" href="style.css" />
+  <!-- Spring Boot serves static files at the root -->
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <div class="container">
   <div class="card">
-    <h1>Movie Wish List App ...</h1>
+    <h1>Movie Wish List App</h1>
+
     <form id="Movie-form">
       <div class="row">
+        <label for="title">Movie Title</label>
         <input type="text" id="title" placeholder="Movie Title" required />
       </div>
+
       <div class="row">
+        <label for="description">Description</label>
         <textarea id="description" placeholder="Description about the movie"></textarea>
       </div>
+
       <div class="row">
-        <input type="text" id="tags" placeholder="Tags (Genre: Horror, Drama ,...)" />
+        <label for="tags">Tags</label>
+        <input type="text" id="tags" placeholder="Tags (Genre: Horror, Drama, ...)" />
       </div>
+
       <div class="actions">
         <button type="submit" class="btn primary">Add</button>
         <button type="button" id="refresh" class="btn">Load List</button>
@@ -33,6 +41,6 @@
   </div>
 </div>
 
-<script src="script.js"></script>
+<script type="module" src="/script.js"></script>
 </body>
 </html>

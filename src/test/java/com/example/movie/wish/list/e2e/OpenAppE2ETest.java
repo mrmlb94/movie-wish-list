@@ -13,8 +13,10 @@ import org.springframework.context.annotation.Import;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(TestcontainersConfiguration.class)
@@ -66,37 +68,22 @@ class OpenAppE2ETest {
         assertThat(title).isNotBlank();
     }
 
+    // Rewritten with Awaitility #Sonar_Issue
     private void waitForAppReady() {
-        int maxRetries = 30;
-        int interval = 1000;
-        boolean isUp = false;
-
         String url = "http://localhost:" + port + "/actuator/health";
 
-        for (int i = 0; i < maxRetries; i++) {
-            try {
-                HttpURLConnection connection = (HttpURLConnection) java.net.URI.create(url).toURL().openConnection();
-                connection.setRequestMethod("GET");
-                connection.setConnectTimeout(500);
-                connection.connect();
-                if (connection.getResponseCode() < 500) {
-                    isUp = true;
-                    break;
-                }
-            } catch (IOException ignored) {
-                // Ignored because temporary network errors are expected during retries
-            }
-
-            try {
-                Thread.sleep(interval);
-            } catch (InterruptedException ignored) {
-                // Ignored because we just want to retry after interval
-            }
-        }
-
-        if (!isUp) {
-            throw new RuntimeException("Backend not responding after " +
-                    (maxRetries * interval / 1000) + " seconds at " + url);
-        }
+        await().atMost(Duration.ofSeconds(30))
+                .pollInterval(Duration.ofSeconds(1))
+                .until(() -> {
+                    try {
+                        HttpURLConnection connection = (HttpURLConnection) java.net.URI.create(url).toURL().openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.setConnectTimeout(500);
+                        connection.connect();
+                        return connection.getResponseCode() < 500;
+                    } catch (IOException e) {
+                        return false;
+                    }
+                });
     }
 }

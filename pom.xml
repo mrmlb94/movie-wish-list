@@ -181,29 +181,12 @@
 		</plugin>
 
 
-
-
-
-
-
-
-
-
 		<!-- Surefire: runs unit tests -->
 	<plugin>
 	    <groupId>org.apache.maven.plugins</groupId>
 	    <artifactId>maven-surefire-plugin</artifactId>
 		<version>3.2.5</version> <!-- works with JUnit 5.11 -->
 		<configuration>
-
-
-<!--			<argLine>@{argLine}																							-->
-<!--			<argLine>-->
-<!--				-javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/1.17.7/byte-buddy-agent-1.17.7.jar-->
-<!--				-XX:+EnableDynamicAgentLoading-->
-<!--			</argLine>-->
-<!--			</argLine>																									-->
-
 
 			<includes>
 	            <include>**/*Test.java</include>
