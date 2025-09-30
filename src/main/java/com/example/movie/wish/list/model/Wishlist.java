@@ -1,4 +1,5 @@
 package com.example.movie.wish.list.model;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,7 +17,7 @@ public class Wishlist {
 
     public Wishlist() {
         this.tags = new ArrayList<>();
-        this.done = false;
+        // done defaults to false automatically, no need to assign
     }
 
     public Wishlist(String title) {
@@ -34,7 +35,7 @@ public class Wishlist {
         this.title = title;
         this.description = description;
         this.tags = tags != null ? tags : new ArrayList<>();
-        this.done = done;
+        this.done = done; // leave as is; only literal 'false' removed from outside calls
     }
 
     // Getters and Setters

@@ -6,14 +6,13 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.Alert;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import org.openqa.selenium.Alert;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,7 +27,6 @@ class OpenAppE2ETest {
 
     @BeforeEach
     void setUp() {
-        // Setup ChromeDriver automatically
         WebDriverManager.chromedriver().setup();
 
         ChromeOptions options = new ChromeOptions();
@@ -48,7 +46,6 @@ class OpenAppE2ETest {
         }
     }
 
-
     @Test
     void openHomePage() {
         String url = "http://localhost:" + port + "/";
@@ -59,7 +56,9 @@ class OpenAppE2ETest {
             Alert alert = driver.switchTo().alert();
             System.out.println("Alert detected: " + alert.getText());
             alert.dismiss();
-        } catch (org.openqa.selenium.NoAlertPresentException ignored) {}
+        } catch (org.openqa.selenium.NoAlertPresentException ignored) {
+            // No alert present, this is expected in normal runs
+        }
 
         String title = driver.getTitle();
         System.out.println("Page title: " + title);
@@ -67,12 +66,6 @@ class OpenAppE2ETest {
         assertThat(title).isNotBlank();
     }
 
-    
-    
-    
-    
-    
-    
     private void waitForAppReady() {
         int maxRetries = 30;
         int interval = 1000;
@@ -82,7 +75,7 @@ class OpenAppE2ETest {
 
         for (int i = 0; i < maxRetries; i++) {
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                HttpURLConnection connection = (HttpURLConnection) java.net.URI.create(url).toURL().openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(500);
                 connection.connect();
@@ -90,9 +83,15 @@ class OpenAppE2ETest {
                     isUp = true;
                     break;
                 }
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+                // Ignored because temporary network errors are expected during retries
+            }
 
-            try { Thread.sleep(interval); } catch (InterruptedException ignored) {}
+            try {
+                Thread.sleep(interval);
+            } catch (InterruptedException ignored) {
+                // Ignored because we just want to retry after interval
+            }
         }
 
         if (!isUp) {
