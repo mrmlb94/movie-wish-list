@@ -109,14 +109,26 @@ jobs:
             target/pit-reports/
           retention-days: 30
 
-      - name: Upload Coverage to Codecov (Optional)
+      - name: Upload Coverage to Codecov
         if: success()
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: target/site/jacoco/jacoco.xml
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
+          flags: unittests,integration
+          name: codecov-movie-wish-list
+          fail_ci_if_error: true
+          verbose: true
+
+      - name: Upload Coverage to Coveralls
+        if: success()
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/site/jacoco/jacoco.xml
+          format: jacoco
+          flag-name: unit-and-integration-tests
+          parallel: false
 
       - name: Build Docker Image for Deployment
         if: success()
