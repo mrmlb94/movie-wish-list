@@ -71,12 +71,14 @@
 		    <artifactId>log4j-core</artifactId>
 		    <version>2.23.1</version>
 		</dependency>
-				<!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
-				<dependency>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.12</version>
-				</dependency>
+		
+		
+		<!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.12</version>
+		</dependency>
 
 			</dependencies>
 
@@ -174,7 +176,7 @@
 		<plugin>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-maven-plugin</artifactId>
-			<version>3.5.6</version>
+			<version>3.5.6</version><!--$NO-MVN-MAN-VER$-->
 			<executions>
 				<execution>
 					<goals>
@@ -189,7 +191,8 @@
 	<plugin>
 	    <groupId>org.apache.maven.plugins</groupId>
 	    <artifactId>maven-surefire-plugin</artifactId>
-		<version>3.2.5</version> <!-- works with JUnit 5.11 -->
+		<version>3.2.5</version><!--$NO-MVN-MAN-VER$--><!--$NO-MVN-MAN-VER$--> 
+		<!-- works with JUnit 5.11 -->
 		<configuration>
 
 			<includes>
@@ -339,7 +342,7 @@
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-failsafe-plugin</artifactId>
-	<version>3.2.5</version>
+	<version>3.2.5</version><!--$NO-MVN-MAN-VER$-->
 	<executions>
     <execution>
       <goals>

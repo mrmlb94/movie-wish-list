@@ -88,7 +88,7 @@ movie-wish-list/
 
 ### Prerequisites
 
-- **Java 21** or higher
+- **Java 21**
 - **Maven 3.9+**
 - **Docker** and **Docker Compose**
 - **Git**
@@ -103,7 +103,7 @@ movie-wish-list/
 
 2. **Start MongoDB with Docker Compose**
    ```bash
-   docker-compose up -d
+   docker compose up -d mongodb
    ```
 
 3. **Build the project**
@@ -118,7 +118,6 @@ movie-wish-list/
 
 5. **Access the application**
     - Web UI: `http://localhost:8080`
-    - Health Check: `http://localhost:8080/actuator/health`
 
 ### Quick Start with Docker
 
