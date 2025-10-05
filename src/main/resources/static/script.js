@@ -1,4 +1,6 @@
-const BASE_URL = "http://localhost:8080/api";
+const BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:8080/api'
+    : `${window.location.origin}/api`;
 
 const listEl = document.getElementById('Movie-list');
 const formEl = document.getElementById('Movie-form');
