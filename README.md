@@ -13,12 +13,13 @@
 # 🎬 Movie Wish List
 
 [![CI Pipeline](https://github.com/mrmlb94/movie-wish-list/actions/workflows/ci.yml/badge.svg)](https://github.com/mrmlb94/movie-wish-list/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/mrmlb94/movie-wish-list/badge.svg?branch=master)](https://coveralls.io/github/mrmlb94/movie-wish-list?branch=master)
 [![codecov](https://codecov.io/gh/mrmlb94/movie-wish-list/branch/master/graph/badge.svg)](https://codecov.io/gh/mrmlb94/movie-wish-list)
 [![Java Version](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
 
 A production-grade web application for managing your movie wish list with military-grade testing and quality assurance.
+
+🌐 **Live Demo**: [https://mrmlb.onrender.com](https://mrmlb.onrender.com)
 
 ## 🎯 Overview
 
@@ -27,12 +28,15 @@ Movie Wish List is a Spring Boot web application that allows users to track film
 ## ✨ Features
 
 - 📝 Create, read, update, and delete movie entries
-- 🔍 Search and filter your movie wish list
-- 💾 Persistent storage with MongoDB
-- 🎨 Responsive web interface using Thymeleaf templates
+- 🏷️ Tag movies with custom categories (e.g., Action, Comedy)
+- ✅ Mark movies as watched/unwatched
+- 💾 Persistent storage with MongoDB Atlas (cloud database)
+- 🎨 Responsive web interface with dynamic API integration
 - 📊 RESTful API endpoints
 - 🏥 Health monitoring with Spring Boot Actuator
 - 🐳 Fully containerized with Docker Compose
+- ☁️ Production deployment on Render.com
+- 🔄 Automatic environment detection (localhost/production)
 
 ## 🛠 Technology Stack
 
@@ -52,10 +56,11 @@ Movie Wish List is a Spring Boot web application that allows users to track film
 - **PIT (Mutation Testing)** - Validates test quality (100% threshold)
 - **JaCoCo** - Code coverage analysis (100% threshold)
 
-### DevOps
+### DevOps & Cloud
 - **Docker & Docker Compose** - Containerization
 - **Maven** - Build automation and dependency management
 - **GitHub Actions** - CI/CD pipeline
+- **Render.com**
 - **Codecov & Coveralls** - Coverage reporting
 
 ## 🏗 Architecture
@@ -271,6 +276,12 @@ We welcome contributions! Please follow these guidelines:
 - Ensure mutation tests pass
 - Document public APIs
 - Update README for new features
+
+## 🐛 Known Issues & Limitations
+
+- **Render Free Tier**: Service spins down after 15 minutes of inactivity (30-50 second cold start)
+- **MongoDB Atlas Free Tier**: Limited to 512MB storage
+- **Browser Compatibility**: Tested on Chrome
 
 
 ## 👥 Authors
