@@ -55,7 +55,7 @@ class WishlistServiceTest {
         when(repository.save(any(Wishlist.class))).thenAnswer(inv -> inv.getArgument(0));
 
         // When: updating multiple fields, incl. tags + done + description
-        Wishlist updatedMovie = new Wishlist("Inception Reloaded", "Neo Sci-Fi"); // CHANGED
+        Wishlist updatedMovie = new Wishlist("Inception Reloaded", "Neo Sci-Fi");
         updatedMovie.setTags(Arrays.asList("sci-fi", "thriller"));
         updatedMovie.setDone(true);
 
@@ -68,13 +68,13 @@ class WishlistServiceTest {
 
         // These assertions will fail if any setter call is removed by a mutant
         assertThat(saved.getTitle()).isEqualTo("Inception Reloaded");
-        assertThat(saved.getDescription()).isEqualTo("Neo Sci-Fi"); // CHANGED
+        assertThat(saved.getDescription()).isEqualTo("Neo Sci-Fi");
         assertThat(saved.getTags()).containsExactly("sci-fi", "thriller");
         assertThat(saved.isDone()).isTrue();
 
         // Also assert the service's return mirrors the saved entity
         assertThat(result.getTitle()).isEqualTo("Inception Reloaded");
-        assertThat(result.getDescription()).isEqualTo("Neo Sci-Fi"); // CHANGED
+        assertThat(result.getDescription()).isEqualTo("Neo Sci-Fi");
         assertThat(result.getTags()).containsExactly("sci-fi", "thriller");
         assertThat(result.isDone()).isTrue();
 
@@ -91,8 +91,11 @@ class WishlistServiceTest {
 
         List<Wishlist> movies = service.getAllMovies();
 
-        assertThat(movies).hasSize(2);
-        assertThat(movies).containsExactly(movie1, movie2);
+        // ✅ Fixed: Chain assertions
+        assertThat(movies)
+            .hasSize(2)
+            .containsExactly(movie1, movie2);
+        
         verify(repository, times(1)).findAll();
         verifyNoMoreInteractions(repository);
     }
@@ -105,8 +108,9 @@ class WishlistServiceTest {
 
         Optional<Wishlist> found = service.getMovieById("1");
 
-        assertThat(found).isPresent();
-        assertThat(found.get()).isEqualTo(movie);
+        // ✅ Fixed: Use hasValue() for Optional
+        assertThat(found).hasValue(movie);
+        
         verify(repository, times(1)).findById("1");
         verifyNoMoreInteractions(repository);
     }
