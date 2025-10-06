@@ -1,10 +1,10 @@
 package com.example.movie.wish.list.controller;
 
+import com.example.movie.wish.list.dto.WishlistDTO;
 import com.example.movie.wish.list.model.Wishlist;
 import com.example.movie.wish.list.service.WishlistService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
@@ -20,7 +20,9 @@ public class WishlistRestController {
     }
 
     @PostMapping
-    public Wishlist createMovie(@RequestBody Wishlist wishlist) {
+    public Wishlist createMovie(@RequestBody WishlistDTO dto) {
+        // Convert DTO to Entity
+        Wishlist wishlist = new Wishlist(dto.getTitle(), dto.getDescription(), dto.getTags(), dto.isDone());
         return service.addMovie(wishlist);
     }
 
@@ -36,7 +38,9 @@ public class WishlistRestController {
     }
 
     @PutMapping("/{id}")
-    public Wishlist updateMovie(@PathVariable String id, @RequestBody Wishlist updatedMovie) {
+    public Wishlist updateMovie(@PathVariable String id, @RequestBody WishlistDTO dto) {
+        // Convert DTO to Entity
+        Wishlist updatedMovie = new Wishlist(dto.getTitle(), dto.getDescription(), dto.getTags(), dto.isDone());
         return service.updateMovie(id, updatedMovie);
     }
 
@@ -45,5 +49,4 @@ public class WishlistRestController {
     public void deleteMovie(@PathVariable String id) {
         service.deleteMovie(id);
     }
-
 }

@@ -1,6 +1,7 @@
 package com.example.movie.wish.list.unit;
 
 import com.example.movie.wish.list.controller.WishlistRestController;
+import com.example.movie.wish.list.dto.WishlistDTO;
 import com.example.movie.wish.list.model.Wishlist;
 import com.example.movie.wish.list.service.WishlistService;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,13 +32,21 @@ class WishlistRestControllerTest {
 
     @Test
     void testCreateMovie() {
-        Wishlist movie = new Wishlist("Inception", "Sci-Fi");
-        when(service.addMovie(movie)).thenReturn(movie);
+        // given - ✅ DTO for input (not Wishlist!)
+        WishlistDTO dto = new WishlistDTO("Inception", "Sci-Fi");
+        
+        // expected entity returned by service
+        Wishlist expectedMovie = new Wishlist("Inception", "Sci-Fi");
+        
+        when(service.addMovie(any(Wishlist.class))).thenReturn(expectedMovie);
 
-        Wishlist result = controller.createMovie(movie);
+        // when - ✅ pass DTO to controller
+        Wishlist result = controller.createMovie(dto);
+
+        // then
         assertEquals("Inception", result.getTitle());
         assertEquals("Sci-Fi", result.getDescription());
-        verify(service, times(1)).addMovie(movie);
+        verify(service, times(1)).addMovie(any(Wishlist.class));
     }
 
     @Test
@@ -72,20 +81,25 @@ class WishlistRestControllerTest {
         verify(service, times(1)).getMovieById("99");
     }
 
-
     @Test
     void testUpdateMovie() {
-        Wishlist updated = new Wishlist("Inception Reloaded", "Mind-bender"); // different desc
-        when(service.updateMovie("1", updated)).thenReturn(updated);
+        // given - ✅ DTO for input (not Wishlist!)
+        WishlistDTO dto = new WishlistDTO("Inception Reloaded", "Mind-bender");
+        
+        // expected entity returned by service
+        Wishlist updatedMovie = new Wishlist("Inception Reloaded", "Mind-bender");
+        
+        when(service.updateMovie(eq("1"), any(Wishlist.class))).thenReturn(updatedMovie);
 
-        Wishlist result = controller.updateMovie("1", updated);
+        // when - ✅ pass DTO to controller
+        Wishlist result = controller.updateMovie("1", dto);
 
+        // then
         assertEquals("Inception Reloaded", result.getTitle());
-        assertEquals("Mind-bender", result.getDescription()); // assert both
-        verify(service, times(1)).updateMovie("1", updated);
-        verifyNoMoreInteractions(service); // ensures no hidden calls survive
+        assertEquals("Mind-bender", result.getDescription());
+        verify(service, times(1)).updateMovie(eq("1"), any(Wishlist.class));
+        verifyNoMoreInteractions(service);
     }
-
 
     @Test
     void testDeleteMovie() {
@@ -96,5 +110,4 @@ class WishlistRestControllerTest {
         verify(service, times(1)).deleteMovie("1");
         verifyNoMoreInteractions(service);
     }
-
 }
