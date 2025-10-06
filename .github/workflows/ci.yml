@@ -74,7 +74,7 @@ jobs:
           docker-compose ps
 
       - name: Run Integration and E2E Tests with Maven Failsafe
-        run: ./mvnw verify -DskipTests
+        run: ./mvnw clean verify
         env:
           MAVEN_OPTS: "-Xmx1024m"
 
