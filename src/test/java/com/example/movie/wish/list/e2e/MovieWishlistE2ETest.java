@@ -11,11 +11,7 @@ import java.util.concurrent.TimeUnit;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MovieWishlistE2ETest {
-
-    private String createdMovieId;
 
     @BeforeAll
     static void waitForBackend() {
@@ -41,8 +37,7 @@ class MovieWishlistE2ETest {
     }
 
     @Test
-    @Order(1)
-    void testGetAllMovies_InitiallyEmpty() {
+    void testGetAllMovies_ReturnsListSuccessfully() {
         given()
                 .contentType(ContentType.JSON)
                 .when()
@@ -53,7 +48,6 @@ class MovieWishlistE2ETest {
     }
 
     @Test
-    @Order(2)
     void testCreateMovie_Success() {
         String requestBody = """
             {
@@ -64,7 +58,7 @@ class MovieWishlistE2ETest {
             }
             """;
 
-        createdMovieId = given()
+        String movieId = given()
                 .contentType(ContentType.JSON)
                 .body(requestBody)
                 .when()
@@ -79,48 +73,77 @@ class MovieWishlistE2ETest {
                 .extract()
                 .path("id");
 
-        System.out.println("✅ Movie created with ID: " + createdMovieId);
+        System.out.println("✅ Movie created with ID: " + movieId);
+
+        // Cleanup
+        given().delete("/api/wishlist/" + movieId);
     }
 
     @Test
-    @Order(3)
-    void testGetAllMovies_ContainsCreatedMovie() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/api/wishlist")
-                .then()
-                .statusCode(200)
-                .body("$", hasSize(greaterThanOrEqualTo(1)))
-                .body("title", hasItem("Inception"));
-    }
-
-    @Test
-    @Order(4)
     void testGetMovieById_Success() {
-        Assertions.assertNotNull(createdMovieId, "Movie ID should not be null");
+        // Setup: Create a movie first
+        String createBody = """
+            {
+                "title": "The Dark Knight",
+                "description": "A superhero thriller",
+                "tags": ["Action", "Crime"],
+                "done": false
+            }
+            """;
 
+        String movieId = given()
+                .contentType(ContentType.JSON)
+                .body(createBody)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        // Test: Get the movie by ID
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/wishlist/" + createdMovieId)
+                .get("/api/wishlist/" + movieId)
                 .then()
                 .statusCode(200)
-                .body("id", equalTo(createdMovieId))
-                .body("title", equalTo("Inception"))
-                .body("description", equalTo("A mind-bending thriller"));
+                .body("id", equalTo(movieId))
+                .body("title", equalTo("The Dark Knight"))
+                .body("description", equalTo("A superhero thriller"));
+
+        // Cleanup
+        given().delete("/api/wishlist/" + movieId);
     }
 
     @Test
-    @Order(5)
     void testUpdateMovie_Success() {
-        Assertions.assertNotNull(createdMovieId, "Movie ID should not be null");
+        // Setup: Create a movie first
+        String createBody = """
+            {
+                "title": "Parasite",
+                "description": "A South Korean thriller",
+                "tags": ["Drama", "Thriller"],
+                "done": false
+            }
+            """;
 
+        String movieId = given()
+                .contentType(ContentType.JSON)
+                .body(createBody)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        // Test: Update the movie
         String updateBody = """
             {
-                "title": "Inception (Updated)",
-                "description": "An updated mind-bending thriller",
-                "tags": ["Sci-Fi", "Action", "Drama"],
+                "title": "Parasite (Updated)",
+                "description": "An award-winning South Korean thriller",
+                "tags": ["Drama", "Thriller", "Award Winner"],
                 "done": true
             }
             """;
@@ -129,29 +152,49 @@ class MovieWishlistE2ETest {
                 .contentType(ContentType.JSON)
                 .body(updateBody)
                 .when()
-                .put("/api/wishlist/" + createdMovieId)
+                .put("/api/wishlist/" + movieId)
                 .then()
                 .statusCode(200)
-                .body("id", equalTo(createdMovieId))
-                .body("title", equalTo("Inception (Updated)"))
-                .body("description", equalTo("An updated mind-bending thriller"))
-                .body("tags", hasItems("Sci-Fi", "Action", "Drama"))
+                .body("id", equalTo(movieId))
+                .body("title", equalTo("Parasite (Updated)"))
+                .body("description", equalTo("An award-winning South Korean thriller"))
+                .body("tags", hasItems("Drama", "Thriller", "Award Winner"))
                 .body("done", equalTo(true));
 
         System.out.println("✅ Movie updated successfully");
+
+        // Cleanup
+        given().delete("/api/wishlist/" + movieId);
     }
 
     @Test
-    @Order(6)
     void testToggleDoneStatus() {
-        Assertions.assertNotNull(createdMovieId, "Movie ID should not be null");
+        // Setup: Create a movie with done=true
+        String createBody = """
+            {
+                "title": "Shawshank Redemption",
+                "description": "A prison drama",
+                "tags": ["Drama"],
+                "done": true
+            }
+            """;
 
-        // Toggle done status back to false
+        String movieId = given()
+                .contentType(ContentType.JSON)
+                .body(createBody)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        // Test: Toggle done status to false
         String toggleBody = """
             {
-                "title": "Inception (Updated)",
-                "description": "An updated mind-bending thriller",
-                "tags": ["Sci-Fi", "Action", "Drama"],
+                "title": "Shawshank Redemption",
+                "description": "A prison drama",
+                "tags": ["Drama"],
                 "done": false
             }
             """;
@@ -160,23 +203,44 @@ class MovieWishlistE2ETest {
                 .contentType(ContentType.JSON)
                 .body(toggleBody)
                 .when()
-                .put("/api/wishlist/" + createdMovieId)
+                .put("/api/wishlist/" + movieId)
                 .then()
                 .statusCode(200)
                 .body("done", equalTo(false));
 
         System.out.println("✅ Done status toggled successfully");
+
+        // Cleanup
+        given().delete("/api/wishlist/" + movieId);
     }
 
     @Test
-    @Order(7)
     void testDeleteMovie_Success() {
-        Assertions.assertNotNull(createdMovieId, "Movie ID should not be null");
+        // Setup: Create a movie first
+        String createBody = """
+            {
+                "title": "Pulp Fiction",
+                "description": "A crime film",
+                "tags": ["Crime", "Drama"],
+                "done": false
+            }
+            """;
 
+        String movieId = given()
+                .contentType(ContentType.JSON)
+                .body(createBody)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        // Test: Delete the movie
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .delete("/api/wishlist/" + createdMovieId)
+                .delete("/api/wishlist/" + movieId)
                 .then()
                 .statusCode(204);
 
@@ -184,20 +248,39 @@ class MovieWishlistE2ETest {
     }
 
     @Test
-    @Order(8)
     void testGetMovieById_AfterDelete_NotFound() {
-        Assertions.assertNotNull(createdMovieId, "Movie ID should not be null");
+        // Setup: Create and then delete a movie
+        String createBody = """
+            {
+                "title": "Fight Club",
+                "description": "A psychological thriller",
+                "tags": ["Drama", "Thriller"],
+                "done": false
+            }
+            """;
 
+        String movieId = given()
+                .contentType(ContentType.JSON)
+                .body(createBody)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        given().delete("/api/wishlist/" + movieId);
+
+        // Test: Try to get deleted movie
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/wishlist/" + createdMovieId)
+                .get("/api/wishlist/" + movieId)
                 .then()
                 .statusCode(500); // Controller throws RuntimeException which returns 500
     }
 
     @Test
-    @Order(9)
     void testCreateMovieWithMinimalData() {
         String minimalBody = """
             {
@@ -221,13 +304,189 @@ class MovieWishlistE2ETest {
                 .extract()
                 .path("id");
 
+        System.out.println("✅ Minimal movie creation test passed");
+
         // Cleanup
         given().delete("/api/wishlist/" + movieId);
-        System.out.println("✅ Minimal movie creation test passed");
     }
 
     @Test
-    @Order(10)
+    void testCreateMovieWithLongDescription() {
+        String longDescription = "A".repeat(1000); // Test boundary limit
+        String requestBody = String.format("""
+            {
+                "title": "Titanic",
+                "description": "%s",
+                "tags": ["Drama", "Romance"],
+                "done": false
+            }
+            """, longDescription);
+
+        String movieId = given()
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .body("title", equalTo("Titanic"))
+                .body("description", equalTo(longDescription))
+                .extract()
+                .path("id");
+
+        System.out.println("✅ Long description test passed");
+
+        // Cleanup
+        given().delete("/api/wishlist/" + movieId);
+    }
+
+    @Test
+    void testCreateMovieWithSpecialCharacters() {
+        String requestBody = """
+            {
+                "title": "Amélie & François: L'été à Paris",
+                "description": "A film with special chars: @#$%^&*()_+{}|:<>?",
+                "tags": ["French", "Romance", "Comedy"],
+                "done": false
+            }
+            """;
+
+        String movieId = given()
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .body("title", equalTo("Amélie & François: L'été à Paris"))
+                .body("description", containsString("@#$%^&*()_+{}|:<>?"))
+                .extract()
+                .path("id");
+
+        System.out.println("✅ Special characters test passed");
+
+        // Cleanup
+        given().delete("/api/wishlist/" + movieId);
+    }
+
+    @Test
+    void testCreateMultipleMoviesAndVerifyList() {
+        // Create multiple movies
+        String movie1Body = """
+            {
+                "title": "Gladiator",
+                "description": "Ancient Rome epic",
+                "tags": ["Action", "Drama"],
+                "done": false
+            }
+            """;
+
+        String movie2Body = """
+            {
+                "title": "The Godfather",
+                "description": "Mafia drama",
+                "tags": ["Crime", "Drama"],
+                "done": true
+            }
+            """;
+
+        String movieId1 = given()
+                .contentType(ContentType.JSON)
+                .body(movie1Body)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        String movieId2 = given()
+                .contentType(ContentType.JSON)
+                .body(movie2Body)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        // Verify both movies appear in the list
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .body("title", hasItems("Gladiator", "The Godfather"));
+
+        System.out.println("✅ Multiple movies test passed");
+
+        // Cleanup
+        given().delete("/api/wishlist/" + movieId1);
+        given().delete("/api/wishlist/" + movieId2);
+    }
+
+    @Test
+    void testUpdateMovieWithEmptyTags() {
+        // Setup: Create a movie with tags
+        String createBody = """
+            {
+                "title": "Avatar",
+                "description": "Sci-fi adventure",
+                "tags": ["Sci-Fi", "Action", "Adventure"],
+                "done": false
+            }
+            """;
+
+        String movieId = given()
+                .contentType(ContentType.JSON)
+                .body(createBody)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        // Test: Update to remove all tags
+        String updateBody = """
+            {
+                "title": "Avatar",
+                "description": "Sci-fi adventure",
+                "tags": [],
+                "done": false
+            }
+            """;
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(updateBody)
+                .when()
+                .put("/api/wishlist/" + movieId)
+                .then()
+                .statusCode(200)
+                .body("tags", empty());
+
+        System.out.println("✅ Empty tags update test passed");
+
+        // Cleanup
+        given().delete("/api/wishlist/" + movieId);
+    }
+
+    @Test
+    void testGetMovieById_WithInvalidId() {
+        // Test: Try to get a movie with non-existent ID
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/wishlist/999999")
+                .then()
+                .statusCode(anyOf(equalTo(404), equalTo(500)));
+
+        System.out.println("✅ Invalid ID test passed");
+    }
+
+    @Test
     void testFullUserFlow() {
         // 1. Create a new movie
         String createBody = """
@@ -258,7 +517,16 @@ class MovieWishlistE2ETest {
                 .statusCode(200)
                 .body("title", hasItem("Interstellar"));
 
-        // 3. Update the movie
+        // 3. Retrieve by ID
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/wishlist/" + movieId)
+                .then()
+                .statusCode(200)
+                .body("title", equalTo("Interstellar"));
+
+        // 4. Update the movie
         String updateBody = """
             {
                 "title": "Interstellar",
@@ -277,13 +545,70 @@ class MovieWishlistE2ETest {
                 .statusCode(200)
                 .body("done", equalTo(true));
 
-        // 4. Delete the movie
+        // 5. Delete the movie
         given()
                 .when()
                 .delete("/api/wishlist/" + movieId)
                 .then()
                 .statusCode(204);
 
+        // 6. Verify deletion
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/wishlist/" + movieId)
+                .then()
+                .statusCode(anyOf(equalTo(404), equalTo(500)));
+
         System.out.println("✅ Full user flow test completed");
+    }
+
+    @Test
+    void testCreateAndUpdateMultipleTimes() {
+        // Create a movie
+        String createBody = """
+            {
+                "title": "Forrest Gump",
+                "description": "Life story",
+                "tags": ["Drama"],
+                "done": false
+            }
+            """;
+
+        String movieId = given()
+                .contentType(ContentType.JSON)
+                .body(createBody)
+                .when()
+                .post("/api/wishlist")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        // Update multiple times
+        for (int i = 1; i <= 3; i++) {
+            String updateBody = String.format("""
+                {
+                    "title": "Forrest Gump (Version %d)",
+                    "description": "Life story - Update %d",
+                    "tags": ["Drama", "Update%d"],
+                    "done": %b
+                }
+                """, i, i, i, i % 2 == 0);
+
+            given()
+                    .contentType(ContentType.JSON)
+                    .body(updateBody)
+                    .when()
+                    .put("/api/wishlist/" + movieId)
+                    .then()
+                    .statusCode(200)
+                    .body("title", equalTo("Forrest Gump (Version " + i + ")"));
+        }
+
+        System.out.println("✅ Multiple updates test passed");
+
+        // Cleanup
+        given().delete("/api/wishlist/" + movieId);
     }
 }
