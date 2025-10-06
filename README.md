@@ -13,9 +13,11 @@
 # 🎬 Movie Wish List
 
 [![CI Pipeline](https://github.com/mrmlb94/movie-wish-list/actions/workflows/ci.yml/badge.svg)](https://github.com/mrmlb94/movie-wish-list/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/mrmlb94/movie-wish-list/branch/master/graph/badge.svg)](https://codecov.io/gh/mrmlb94/movie-wish-list)
 [![Java Version](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
+
+[![Coverage Status](https://coveralls.io/repos/github/mrmlb94/movie-wish-list/badge.svg?branch=master)](https://coveralls.io/github/mrmlb94/movie-wish-list?branch=master)
+[![codecov](https://codecov.io/gh/mrmlb94/movie-wish-list/branch/master/graph/badge.svg)](https://codecov.io/gh/mrmlb94/movie-wish-list)
 
 A production-grade web application for managing your movie wish list with military-grade testing and quality assurance.
 
