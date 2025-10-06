@@ -1,9 +1,12 @@
 # === Large Binary Files ===
 google-chrome-stable_current_amd64.deb
 chromedriver-linux64/
-*DS_Store*
+.DS_Store
+*/.DS_Store
 *HELP.*
 *.iml
+
+
 # === Build and Generated Files ===
 target/
 build/
@@ -11,11 +14,11 @@ build/
 !**/src/test/**/target/
 !**/src/main/**/build/
 !**/src/test/**/build/
-target/HELP.md
 .mvn/wrapper/maven-wrapper.jar
 /htmlReport
-# === IDEs ===
 
+
+# === IDEs ===
 ## IntelliJ IDEA
 .idea/
 *.iws
@@ -40,16 +43,31 @@ target/HELP.md
 ## VS Code
 .vscode/
 
+
 # === Node.js ===
 node_modules/
+
 
 # === Logs ===
 *.log
 
-# === Docker Files (Optional) ===
+
+# === Docker Files (Keep these) ===
 !Dockerfile
 !docker-compose.yml
 
+
 # === Sensitive Data ===
 .env
-/render.yaml
+render.yaml
+
+
+# === OS Generated Files ===
+Thumbs.db
+Desktop.ini
+
+
+# === Java & Maven ===
+*.class
+*.jar
+!**/wrapper/*.jar
