@@ -243,6 +243,7 @@
 					<param>com.example.movie.wish.list.model.*</param>
 					<param>com.example.movie.wish.list.repository.*</param>
 					<param>com.example.movie.wish.list.model.Wishlist*</param>
+           			<param>com.example.movie.wish.list.dto.*</param>
 
 				</excludedClasses>
 
@@ -310,6 +311,8 @@
 						<excludes>
 							<exclude>com/example/movie/wish/list/MovieWishListApplication*</exclude>
 							<exclude>com/example/movie/wish/list/model/Wishlist*</exclude>
+							<exclude>com/example/movie/wish/list/dto/**</exclude>
+
 						</excludes>
 					</configuration>
 
