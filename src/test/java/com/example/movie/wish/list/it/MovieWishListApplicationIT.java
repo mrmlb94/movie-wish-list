@@ -3,6 +3,8 @@ package com.example.movie.wish.list.it;
 import com.example.movie.wish.list.TestcontainersConfiguration;
 import com.example.movie.wish.list.model.Wishlist;
 import com.example.movie.wish.list.repository.WishlistRepository;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +21,14 @@ class MovieWishListApplicationIT {
     @Autowired
     private WishlistRepository repository;
 
+    
+    
+    @BeforeEach
+    void cleanDb() {
+        repository.deleteAll();
+    }
+    
+    
     @Test
     void contextLoads() {
         assertThat(repository).isNotNull();
