@@ -44,7 +44,13 @@
   <configuration-dockerComposeFile>${project.basedir}/docker-compose.yml</configuration-dockerComposeFile>
 		<java.version>21</java.version>    <!--change from 17 to 21 for PIT -->
 		
-		
+		<sonar.coverage.exclusions>
+    **/dto/**,
+    **/model/**,
+    **/MovieWishListApplication.java,
+    **/TestcontainersConfiguration.java
+</sonar.coverage.exclusions>
+
     <!-- ✅ Exclude DTOs from duplication analysis -->
     <sonar.cpd.exclusions>
         **/dto/*.java
@@ -299,6 +305,7 @@
             <exclude>com/example/movie/wish/list/MovieWishListApplication*</exclude>
             <exclude>com/example/movie/wish/list/model/Wishlist*</exclude>
             <exclude>com/example/movie/wish/list/dto/**</exclude>
+            <exclude>com/example/movie/wish/list/dto/*.java</exclude>
             <exclude>com/example/movie/wish/list/TestcontainersConfiguration*</exclude>
         </excludes>
     </configuration>
