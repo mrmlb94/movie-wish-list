@@ -29,9 +29,9 @@ build/
 .factorypath
 .springBeans
 .sts4-cache
-.classpath
-.project
-.settings/
+#.classpath
+#.project
+#.settings/
 
 ## NetBeans
 /nbproject/private/
