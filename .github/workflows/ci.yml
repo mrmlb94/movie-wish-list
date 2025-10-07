@@ -66,12 +66,6 @@ jobs:
             exit 1
           fi
 
-      - name: Start Docker Compose for Integration Tests
-        run: |
-          docker-compose -f docker-compose.yml up -d
-          echo "Waiting for services to be ready..."
-          sleep 15
-          docker-compose ps
 
       - name: Run Integration and E2E Tests with Maven Failsafe
         run: ./mvnw clean verify
@@ -90,12 +84,6 @@ jobs:
             cat target/surefire-reports/*.txt || true
           fi
 
-      - name: Stop Docker Compose
-        if: always()
-        run: |
-          docker-compose -f docker-compose.yml down -v
-          docker-compose ps
-          echo "✓ Docker Compose stopped and cleaned up"
 
       - name: Upload Test Reports
         if: always()

@@ -31,7 +31,7 @@ build/
 .sts4-cache
 #.classpath
 #.project
-#.settings/
+!.settings/
 
 ## NetBeans
 /nbproject/private/
